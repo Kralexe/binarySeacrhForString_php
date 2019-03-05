@@ -41,7 +41,6 @@ function binarySearch($y, $x)
     return -1; 
 }
 
-print_r($y);
 $result = binarySearch($y, $x); 
 
 if ($result == -1) 
