@@ -2,28 +2,19 @@
 $name = $argv[1];
 $x = $argv[2]; 
 
-$myfile = fopen($name, "r") or die("Unable to open file!");
-$strVar = fread($myfile,filesize($name));
-fclose($myfile);
-//preg_replace("/\r\n|\n|\r/","",$strVar);
+$file = new SplFileObject($name, 'r');
 
-$arr= preg_split("/\R/", $strVar);
-$y = array();
-foreach ($arr as $value) {
-    $f = preg_split("/\t/", $value);
-    $y[] = $f[0];
-    $z[] = $f[1];
-}
-
-function binarySearch($y, $x) 
+function binarySearch($file, $x) 
 { 
-    $l = 0; 
-    $r = count($y)-1; 
+    $l = 0;
+    $file->seek(PHP_INT_MAX);
+    $r = $file->key() + 1;
     while ($l <= $r)  
     { 
         $m = $l + (int)(($r - $l) / 2); 
-  
-        $res = strcmp($x, $y[$m]); 
+        $file->seek($m);
+        $s = preg_split("/\t/", $file->current());
+        $res = strcmp($x, $s[0]); 
   
         // Check if x is present at mid 
         if ($res == 0) 
@@ -41,11 +32,11 @@ function binarySearch($y, $x)
     return -1; 
 }
 
-$result = binarySearch($y, $x); 
-
+$result = binarySearch($file, $x); 
+$file->seek($result);
+$s = preg_split("/\t/", $file->current());
 if ($result == -1) 
     print("Element not present"); 
 else
-    print($z[$result]); 
-
+    print($s[1]); 
 ?>
